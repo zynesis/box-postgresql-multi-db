@@ -15,6 +15,9 @@ packages:
 script: |
   sudo cat /etc/sudoers
   groups
+  echo "%sudo ALL=(ALL) ALL" | sudo tee -a /etc/sudoers
+  sudo cat /etc/sudoers
+  groups
   sudo apt-get update -y
   sudo apt-get install postgresql -y
   echo "host all all 0.0.0.0/0 md5" | sudo tee -a /etc/postgresql/9.3/main/pg_hba.conf 
