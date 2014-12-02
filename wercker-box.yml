@@ -1,0 +1,60 @@
+name: postgresql-multi-db
+version: 0.0.1
+inherits: wercker/ubuntu12.04-webessentials@1.0.4
+type: service
+platform: ubuntu@12.04
+description: Wercker box for multiple PostgreSQL databases
+keywords:
+  - postgres
+  - postgresql
+  - database
+  - psql
+  - multi
+packages:
+  - postgresql@9.1
+script: |
+  sudo apt-get update -y
+  sudo apt-get install postgresql -y
+
+  echo "host all all 0.0.0.0/0 md5" | sudo tee -a /etc/postgresql/9.1/main/pg_hba.conf 
+  sudo service postgresql restart
+
+  for i in $(seq 1 5);
+  do
+    export database"$i"="werckerdb"$i
+    export user"$i"="postgres"$i
+    sudo -u postgres psql -c "CREATE USER postgres"$i" WITH PASSWORD 'wercker';"
+    sudo -u postgres psql -c "CREATE DATABASE werckerdb"$i";"
+    sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE werckerdb"$i" TO postgres"$i";"
+  done
+env:
+  WERCKER_POSTGRESQL_DB1_HOST: $$HOST$$
+  WERCKER_POSTGRESQL_DB1_USERNAME: postgres1
+  WERCKER_POSTGRESQL_DB1_PASSWORD: wercker
+  WERCKER_POSTGRESQL_DB1_PORT: 5432
+  WERCKER_POSTGRESQL_DB1_DATABASE: werckerdb1
+  WERCKER_POSTGRESQL_DB1_URL: postgres://postgres1:wercker@$$HOST$$:5432/werckerdb1
+  WERCKER_POSTGRESQL_DB2_HOST: $$HOST$$
+  WERCKER_POSTGRESQL_DB2_USERNAME: postgres2
+  WERCKER_POSTGRESQL_DB2_PASSWORD: wercker
+  WERCKER_POSTGRESQL_DB2_PORT: 5432
+  WERCKER_POSTGRESQL_DB2_DATABASE: werckerdb2
+  WERCKER_POSTGRESQL_DB2_URL: postgres://postgres2:wercker@$$HOST$$:5432/werckerdb2
+  WERCKER_POSTGRESQL_DB3_HOST: $$HOST$$
+  WERCKER_POSTGRESQL_DB3_USERNAME: postgres3
+  WERCKER_POSTGRESQL_DB3_PASSWORD: wercker
+  WERCKER_POSTGRESQL_DB3_PORT: 5432
+  WERCKER_POSTGRESQL_DB3_DATABASE: werckerdb3
+  WERCKER_POSTGRESQL_DB3_URL: postgres://postgres3:wercker@$$HOST$$:5432/werckerdb3
+  WERCKER_POSTGRESQL_DB4_HOST: $$HOST$$
+  WERCKER_POSTGRESQL_DB4_USERNAME: postgres4
+  WERCKER_POSTGRESQL_DB4_PASSWORD: wercker
+  WERCKER_POSTGRESQL_DB4_PORT: 5432
+  WERCKER_POSTGRESQL_DB4_DATABASE: werckerdb4
+  WERCKER_POSTGRESQL_DB4_URL: postgres://postgres4:wercker@$$HOST$$:5432/werckerdb4
+  WERCKER_POSTGRESQL_DB5_HOST: $$HOST$$
+  WERCKER_POSTGRESQL_DB5_USERNAME: postgres5
+  WERCKER_POSTGRESQL_DB5_PASSWORD: wercker
+  WERCKER_POSTGRESQL_DB5_PORT: 5432
+  WERCKER_POSTGRESQL_DB5_DATABASE: werckerdb5
+  WERCKER_POSTGRESQL_DB5_URL: postgres://postgres5:wercker@$$HOST$$:5432/werckerdb5
