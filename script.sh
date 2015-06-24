@@ -16,16 +16,13 @@ echo "checkpoint_timeout = 1h" | sudo tee -a  /etc/postgresql/**/main/postgresql
 
 # Use RAM disk
 sudo service postgresql stop
-TMPDIR=/tmp/ramdisk;
-MOUNTPOINT=/var/lib/postgresql;
-[ -d $TMPDIR ] || mkdir $TMPDIR;
-sudo mount -t tmpfs -o size=512M,nr_inodes=10k,mode=0777 tmpfs $TMPDIR;
-sudo rsync --archive $MOUNTPOINT/ $TMPDIR/;
-#sudo mount -o bind $TMPDIR $MOUNTPOINT;
-sudo rm -rf $MOUNTPOINT;
-sudo ln -s $TMPDIR $MOUNTPOINT;
-
-sudo service postgresql start
+sudo mkdir /tmp/ramdisk;
+sudo mount -t tmpfs -o size=128M tmpfs /tmp/ramdisk/;
+sudo mv /var/lib/postgresql /tmp/ramdisk/postgresql;
+sudo ln -s /tmp/ramdisk/postgresql /var/lib/postgresql;
+sudo chmod -R 700 /var/lib/postgresql;
+sudo chown -R postgres:postgres /var/lib/postgresql;
+sudo service postgresql start;
 
 for i in $(seq 1 5);
 do
