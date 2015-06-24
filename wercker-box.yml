@@ -1,5 +1,5 @@
 name: postgresql-multi-db
-version: 1.2.2
+version: 1.2.3
 inherits: wercker/ubuntu12.04-webessentials@1.0.4
 type: service
 platform: ubuntu@12.04
@@ -26,10 +26,10 @@ script: |
   sudo service postgresql stop
   sudo mkdir /tmp/ramdisk;
   sudo mount -t tmpfs -o size=128M tmpfs /tmp/ramdisk/;
-  sudo mv /var/lib/postgresql /tmp/ramdisk/postgresql;
-  sudo ln -s /tmp/ramdisk/postgresql /var/lib/postgresql;
-  sudo chmod -R 700 /var/lib/postgresql;
-  sudo chown -R postgres:postgres /var/lib/postgresql;
+  #sudo mv /var/lib/postgresql /tmp/ramdisk/postgresql;
+  #sudo ln -s /tmp/ramdisk/postgresql /var/lib/postgresql;
+  #sudo chmod -R 700 /var/lib/postgresql;
+  #sudo chown -R postgres:postgres /var/lib/postgresql;
   sudo service postgresql start;
   for i in $(seq 1 5);  do psql -Upostgres -c "CREATE USER postgres"$i" WITH PASSWORD 'wercker';"; psql -Upostgres -c "CREATE DATABASE werckerdb"$i";"; psql -Upostgres -c "GRANT ALL PRIVILEGES ON DATABASE werckerdb"$i" TO postgres"$i";"; done
 env:
