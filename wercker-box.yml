@@ -24,13 +24,16 @@ script: |
   echo "checkpoint_segments = 30" | sudo tee -a  /etc/postgresql/**/main/postgresql.conf
   echo "checkpoint_timeout = 1h" | sudo tee -a  /etc/postgresql/**/main/postgresql.conf
   sudo service postgresql stop
-  free
+  free;
   TMPDIR=/tmp/ramdisk;
-  MOUNTPOINT=/var/lib/postgresql/;
+  MOUNTPOINT=/var/lib/postgresql;
   [ -d $TMPDIR ] || mkdir $TMPDIR;
-  sudo mount -t tmpfs -o size=50M,nr_inodes=10k,mode=0777 tmpfs $TMPDIR;
+  sudo mount -t tmpfs -o size=512M,nr_inodes=10k,mode=0777 tmpfs $TMPDIR;
   sudo rsync --archive $MOUNTPOINT/ $TMPDIR/;
-  sudo mount -o bind $TMPDIR $MOUNTPOINT;
+  #sudo mount -o bind $TMPDIR $MOUNTPOINT;
+  sudo rm -rf $MOUNTPOINT;
+  sudo ln -s $TMPDIR $MOUNTPOINT;
+  mount;
   sudo service postgresql restart
   for i in $(seq 1 5);  do psql -Upostgres -c "CREATE USER postgres"$i" WITH PASSWORD 'wercker';"; psql -Upostgres -c "CREATE DATABASE werckerdb"$i";"; psql -Upostgres -c "GRANT ALL PRIVILEGES ON DATABASE werckerdb"$i" TO postgres"$i";"; done
 env:
