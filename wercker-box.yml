@@ -1,5 +1,5 @@
 name: postgresql-multi-db
-version: 1.2.0
+version: 1.2.1
 inherits: wercker/ubuntu12.04-webessentials@1.0.4
 type: service
 platform: ubuntu@12.04
@@ -31,8 +31,8 @@ script: |
   sudo mount -t tmpfs -o size=512M,nr_inodes=10k,mode=0777 tmpfs $TMPDIR;
   sudo rsync --archive $MOUNTPOINT/ $TMPDIR/;
   #sudo mount -o bind $TMPDIR $MOUNTPOINT;
-  sudo rm -rf $MOUNTPOINT;
-  sudo ln -s $TMPDIR $MOUNTPOINT;
+  #sudo rm -rf $MOUNTPOINT;
+  #sudo ln -s $TMPDIR $MOUNTPOINT;
   mount;
   sudo service postgresql restart
   for i in $(seq 1 5);  do psql -Upostgres -c "CREATE USER postgres"$i" WITH PASSWORD 'wercker';"; psql -Upostgres -c "CREATE DATABASE werckerdb"$i";"; psql -Upostgres -c "GRANT ALL PRIVILEGES ON DATABASE werckerdb"$i" TO postgres"$i";"; done
